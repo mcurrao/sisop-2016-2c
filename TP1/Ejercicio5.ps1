@@ -2,7 +2,7 @@
 .SYNOPSIS
 Escribe en un archivo un listado de los procesos que más utilización de memoria tienen
 .DESCRIPTION
-Escribe en un archivo, cada N segundos, un listado de los M procesos que más utilización de memoria tienen
+Escribe en c:\process-running.txt, cada N segundos, un listado de los M procesos que más utilización de memoria tienen
 
 Especificando por cada uno de ellos la siguiente información:
 Identificador (PID) – Path del ejecutable – Memoria (Working Set).
@@ -13,24 +13,28 @@ Si N es igual a 0, entonces la información se guardará sólo una vez. En caso 
 Cantidad de procesos a mostrar
 #>
 
-function List-process() {
-    [Cmdletbinding()]
-    param(
-        [Parameter(Mandatory=$true)][int]$M,
-        [int]$N
-    )
-    $saveFile = "c:\process-running.txt";
-    $action = {
-        Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $M ProcessId, ExecutablePath, WorkingSetSize | Out-File $saveFile
-    }
-    if($N -gt 0) {
-        $timer = New-Object System.Timers.Timer
-        $timer.Interval = ($N * 1000)
-        Unregister-Event -ErrorAction SilentlyContinue listProcessTimerIntervalElapsed
-        Register-ObjectEvent -InputObject $timer -EventName elapsed -SourceIdentifier listProcessTimerIntervalElapsed -Action $action
-        $timer.Start()
-    } else {
-        Invoke-Command -scriptblock  $action
-        Write-Host "Procesos corriendo salvados en $saveFile"
-    }
+[Cmdletbinding()]
+param(
+    [Parameter(Mandatory=$true)][int]$M,
+    [int]$N
+)
+$saveFile = "c:\process-running.txt";
+$action = {
+    # Get all processes > sort them by WorkingSize > Get M first of them > Save result table to file
+    Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $M ProcessId, ExecutablePath, WorkingSetSize | Out-File $saveFile
+}
+$timer
+if($N -gt 0) {
+    $timer = New-Object System.Timers.Timer
+    $timer.Interval = ($N * 1000)
+    # Removing previous handler (if present)
+    Unregister-Event -ErrorAction SilentlyContinue listProcessTimerIntervalElapsed
+    # Attaching new handler and starting timer
+    Register-ObjectEvent -InputObject $timer -EventName elapsed -SourceIdentifier listProcessTimerIntervalElapsed -Action $action
+    $timer.Start()
+} else {
+    # Single run
+    # Immediate invocation of saved script
+    Invoke-Command -scriptblock  $action
+    Write-Host "Procesos corriendo salvados en $saveFile"
 }
