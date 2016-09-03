@@ -11,12 +11,14 @@ Segundos entre actualizacion del archivo
 Si N es igual a 0, entonces la información se guardará sólo una vez. En caso de N mayor a cero, la información se actualizará cada N segundos.
 .PARAMETER M
 Cantidad de procesos a mostrar
+.EXAMPLE
+Ejercicio5.ps1 -M 10 -N 5
 #>
 
 [Cmdletbinding()]
 param(
     [Parameter(Mandatory=$true)][int]$M,
-    [int]$N
+    [Parameter(Mandatory=$false)][int]$N
 )
 $saveFile = "c:\process-running.txt";
 $action = {
