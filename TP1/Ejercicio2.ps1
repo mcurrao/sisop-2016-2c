@@ -3,13 +3,13 @@ Nombre del script: Ejercicio2.ps1
 Trabajo práctico número 1
 Ejercicio 2
 
-Ambroso, Nahuel Oscar      DNI:34.575.684
+Ambroso, Nahuel Oscar	   DNI:34.575.684
 Currao, Martin             DNI:38.029.678
-Sebastian,		           DNI:36.359.866
-Juan Cruz,		           DNI:
+Martinez,Sebastian	   DNI:36.359.866
+Rey,Juan Cruz		   DNI:36.921.336
 Rodriguez, Gabriel Alfonso DNI:36.822.462
 
-Entrega
+Entrega 6/09/2016
 #>
 
 

@@ -10,6 +10,19 @@ cumple la longitud que se envía por parámetro y mueve los archivos dentro de e
 ./ejercicio3.ps1 test 3 ó
 -/ejercicio3.ps1 -path test -x 3
 #>
+<#
+Nombre del script: Ejercicio3.ps1
+Trabajo práctico número 1
+Ejercicio 3
+
+Ambroso, Nahuel Oscar	   DNI:34.575.684
+Currao, Martin             DNI:38.029.678
+Martinez,Sebastian	   DNI:36.359.866
+Rey,Juan Cruz		   DNI:36.921.336
+Rodriguez, Gabriel Alfonso DNI:36.822.462
+
+Entrega 6/09/2016
+#>
 
 Param (
     [parameter(Mandatory=$true)]

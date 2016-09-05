@@ -12,6 +12,19 @@ Nombre archivo  Tamaño original Tamaño comprimido  Relación
 Archivo1.txt    100             10                 0,1
 Archivo2.jpg    2366            2254               0,95
 #>
+<#
+Nombre del script: Ejercicio6.ps1
+Trabajo práctico número 1
+Ejercicio 6
+
+Ambroso, Nahuel Oscar	   DNI:34.575.684
+Currao, Martin             DNI:38.029.678
+Martinez,Sebastian	   DNI:36.359.866
+Rey,Juan Cruz		   DNI:36.921.336
+Rodriguez, Gabriel Alfonso DNI:36.822.462
+
+Entrega 6/09/2016
+#>
 
 Param (
     [parameter(Mandatory=$true)]

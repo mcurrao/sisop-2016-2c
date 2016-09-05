@@ -14,6 +14,19 @@ Cantidad de procesos a mostrar
 .EXAMPLE
 Ejercicio5.ps1 -M 10 -N 5
 #>
+<#
+Nombre del script: Ejercicio5.ps1
+Trabajo práctico número 1
+Ejercicio 5
+
+Ambroso, Nahuel Oscar	   DNI:34.575.684
+Currao, Martin             DNI:38.029.678
+Martinez,Sebastian	   DNI:36.359.866
+Rey,Juan Cruz		   DNI:36.921.336
+Rodriguez, Gabriel Alfonso DNI:36.822.462
+
+Entrega 6/09/2016
+#>
 
 [Cmdletbinding()]
 param(
