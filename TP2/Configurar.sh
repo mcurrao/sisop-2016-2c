@@ -13,8 +13,8 @@ if [ ! -w "$1" ] ; then
     exit;
 fi
 confirmation=0
-comment=
-while getopts ":yc:" opt; do
+OPTIND=4
+while getopts ":c:y" opt; do
   case $opt in
     y)
       confirmation=1
@@ -26,7 +26,7 @@ while getopts ":yc:" opt; do
       echo "-$OPTARG no es un parametro valido" >&2
       ;;
     :)
-      read -p -s "Ingrese un comentario" comment
+      read -p "Ingrese un comentario: " comment
       ;;
   esac
 done
@@ -51,10 +51,10 @@ while true; do
         * ) echo "Responda y o n: ";;
     esac
 done
+fi
 previousValue=`grep -x -m 1 "$2=.*" $1 | cut -d = -f 2`
 sed -i "/$2=.*/c\
 # Editado por $addedBy el $addedAt. Valor anterior: $previousValue. $comment\\
 $2=$3" $1
 echo Se actualizo el valor de $2 a $3
-fi
 fi
