@@ -34,10 +34,13 @@ addedBy=`whoami`
 addedAt=`date`
 foundInFile=`grep -x -c -m 1 "$2=.*" $1`
 if [ "$foundInFile" -eq 0 ] ; then
-echo $comment
+if [ ! -z "$comment" ] ; then
+commentOnNewLine="
+# $comment"
+fi
 #La linea de debajo del cat no esta comentada, es para documentar
 cat <<EOT >> $1
-# Agregado por $addedBy el $addedAt. $comment
+# Agregado por $addedBy el $addedAt. $commentOnNewLine
 $2=$3
 EOT
 echo "Se agrega $2=$3 al archivo"
@@ -53,8 +56,13 @@ while true; do
 done
 fi
 previousValue=`grep -x -m 1 "$2=.*" $1 | cut -d = -f 2`
-sed -i "/$2=.*/c\
-# Editado por $addedBy el $addedAt. Valor anterior: $previousValue. $comment\\
-$2=$3" $1
+if [ ! -z "$comment" ] ; then
+commentOnNewLine="\\
+# $comment"
+fi
+replacementLine="/$2=.*/c\
+# Editado por $addedBy el $addedAt. Valor anterior: $previousValue.$commentOnNewLine\\
+$2=$3"
+sed -i "$replacementLine" $1
 echo Se actualizo el valor de $2 a $3
 fi
