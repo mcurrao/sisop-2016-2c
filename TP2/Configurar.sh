@@ -33,13 +33,28 @@ done
 addedBy=`whoami`
 addedAt=`date`
 foundInFile=`grep -x -c -m 1 "$2=.*" $1`
-echo F : $foundInFile
 if [ "$foundInFile" -eq 0 ] ; then
 echo $comment
-#La linea de debajo no esta comentada, es para documentar
+#La linea de debajo del cat no esta comentada, es para documentar
 cat <<EOT >> $1
-# Agregado por $addedBy el $addedAt - $comment
+# Agregado por $addedBy el $addedAt. $comment
 $2=$3
 EOT
 echo "Se agrega $2=$3 al archivo"
+else
+if [ "$confirmation" -eq 0 ] ; then
+while true; do
+    read -p "Esta clave ya se encuentra presente. Sobreescribir? Y/N : " yn
+    case $yn in
+        [YySs]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Responda y o n: ";;
+    esac
+done
+previousValue=`grep -x -m 1 "$2=.*" $1 | cut -d = -f 2`
+sed -i "/$2=.*/c\
+# Editado por $addedBy el $addedAt. Valor anterior: $previousValue. $comment\\
+$2=$3" $1
+echo Se actualizo el valor de $2 a $3
+fi
 fi
