@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Nombre del script: Configurar.sh
+# Trabajo practico numero 2
+# Ejercicio 5
+# Ambroso, Nahuel Oscar	     DNI:34.575.684
+# Currao, Martin             DNI:38.029.678
+# Martinez,Sebastian	     DNI:36.359.866
+# Rey,Juan Cruz		     DNI:36.921.336
+# Rodriguez, Gabriel Alfonso DNI:36.822.462
+# 1ra entrega - 27/09/2016
+
 if [ "$#" -lt 3 ]; then
     # Debe tener al menos 3 parametros
     echo "Uso: Configurar.sh archivo clave valor [-y][-c comentario]"
