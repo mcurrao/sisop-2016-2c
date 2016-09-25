@@ -43,22 +43,22 @@ if(!(Test-Path -Path $saveFile -IsValid) -Or (Test-Path -Path $saveFile -PathTyp
     Write-Error "Debe especificar una ruta de archivo valida"
     Exit 2
 }
-$action = {
-    # Get all processes > sort them by WorkingSize > Get M first of them > Save result table to file
-    Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $M ProcessId, ExecutablePath, WorkingSetSize | Out-File $saveFile
-}
-$timer
 if($N -gt 0) {
     $timer = New-Object System.Timers.Timer
     $timer.Interval = ($N * 1000)
     # Removing previous handler (if present)
     Unregister-Event -ErrorAction SilentlyContinue listProcessTimerIntervalElapsed
     # Attaching new handler and starting timer
-    Register-ObjectEvent -InputObject $timer -EventName elapsed -SourceIdentifier listProcessTimerIntervalElapsed -Action $action
+    $action = {
+        # Get all processes > sort them by WorkingSize > Get M first of them > Save result table to file
+        Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $Event.MessageData.M ProcessId, ExecutablePath, WorkingSetSize | Out-File $Event.MessageData.saveFile
+    }
+    $timerContext = new-object psobject -property @{saveFile = $saveFile; M = $M}
+    Register-ObjectEvent -InputObject $timer -EventName elapsed -SourceIdentifier listProcessTimerIntervalElapsed -Action $action -MessageData $timerContext
     $timer.Start()
+    Write-Host "Se actualizara el archivo cada $N segundos"
 } else {
     # Single run
-    # Immediate invocation of saved script
-    Invoke-Command -scriptblock  $action
+    Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $M ProcessId, ExecutablePath, WorkingSetSize | Out-File $saveFile
     Write-Host "Procesos corriendo salvados en $saveFile"
 }
