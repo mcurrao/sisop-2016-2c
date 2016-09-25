@@ -39,6 +39,10 @@ param(
     [Parameter(Mandatory=$true)][int]$M,
     [Parameter(Mandatory=$false)][int]$N
 )
+if(!(Test-Path -Path $saveFile -IsValid) -Or (Test-Path -Path $saveFile -PathType Container)) {
+    Write-Error "Debe especificar una ruta de archivo valida"
+    Exit 2
+}
 $action = {
     # Get all processes > sort them by WorkingSize > Get M first of them > Save result table to file
     Get-WmiObject -Class Win32_Process | sort -Descending WorkingSetSize | select -first $M ProcessId, ExecutablePath, WorkingSetSize | Out-File $saveFile
