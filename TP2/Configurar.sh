@@ -10,13 +10,23 @@
 # Rodriguez, Gabriel Alfonso DNI:36.822.462
 # 1ra entrega - 27/09/2016
 
+#Ayuda del script con -h o con -?
+if [ "$1" == "-h" ] || [ "$1" == "-?" ] ; then
+    echo "Uso: Configurar.sh archivo clave valor [-y][-c comentario]"
+    echo "Ejemplo:"
+    echo './Configurar.sh /etc/archivo.conf INIT “Nuevo Valor” -c "Comentario mas largo"'
+    exit
+fi 
+
 if [ "$#" -lt 3 ]; then
     # Debe tener al menos 3 parametros
+    # Se provee ayuda
+    echo "Cantidad de parametros incorrecta"
     echo "Uso: Configurar.sh archivo clave valor [-y][-c comentario]"
     exit 2;
 fi
 if [ ! -f "$1" ] ; then
-    # Validaciones al archivo
+    # Validaciones de archivo
     echo "$1 no es un archivo";
     exit 2;
 fi
@@ -64,13 +74,17 @@ fi
 # La linea de debajo del cat no esta comentada, es para documentar
 # Todo a partir del <<EOT se introduce al comando textual,
 # luego de los reemplazos. Esto hasta el literal EOT
+# Uso cat para concatenar el nuevo parametro al archivo, ya que no
+# se econtraba presente
 cat <<EOT >> $1
 # Agregado por $addedBy el $addedAt. $commentOnNewLine
-$2=$3
+$2="$3"
 EOT
 # Finalizado el EOT
 echo "Se agrega $2=$3 al archivo"
 else
+# En caso de que si se encontrara la clave presente en el archivo
+# entonces reemplazo su valor usando sed
 if [ "$confirmation" -eq 0 ] ; then
 # Si no se paso el parametro silencioso -y, entonces
 # pido confirmacion de escritura
@@ -92,7 +106,7 @@ commentOnNewLine="\\
 fi
 replacementLine="/$2=.*/c\
 # Editado por $addedBy el $addedAt. Valor anterior: $previousValue.$commentOnNewLine\\
-$2=$3"
+$2="'"'$3'"'
 # Se reemplaza la linea actual de key=valor en el archivo por una linea
 # documentando, una linea con los comentarios (si los hay), y una linea
 # con el nuevo valor

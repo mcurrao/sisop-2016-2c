@@ -1,0 +1,11 @@
+
+# Agregado por mcurrao el lun sep 26 20:09:33 ART 2016. 
+# Definicion
+# Editado por mcurrao el lun sep 26 20:10:19 ART 2016. Valor anterior: "fooValue1".
+# Update de la variable
+foo="foo Value 2"
+# Agregado por mcurrao el lun sep 26 20:10:46 ART 2016. 
+# Definicion de var
+var="varValue1"
+# Agregado por mcurrao el lun sep 26 20:12:27 ART 2016. 
+qux="qux has no comment"
