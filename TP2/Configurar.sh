@@ -10,9 +10,17 @@
 # Rodriguez, Gabriel Alfonso DNI:36.822.462
 # 1ra entrega - 27/09/2016
 
+function showUsage {
+    # La consigna solicitaba uso de funciones
+    # Muestro el uso
+    echo "Uso: Configurar.sh archivo clave valor [-y][-c [comentario]]"
+}
+
 #Ayuda del script con -h o con -?
 if [ "$1" == "-h" ] || [ "$1" == "-?" ] ; then
-    echo "Uso: Configurar.sh archivo clave valor [-y][-c comentario]"
+    showUsage
+    echo "'"-y"': No pedir confirmacion de sobreescritura"
+    echo "'"-c"': Comentario adicional. Si no se provee como argumento, se solicitara"
     echo "Ejemplo:"
     echo './Configurar.sh /etc/archivo.conf INIT “Nuevo Valor” -c "Comentario mas largo"'
     exit
@@ -21,18 +29,18 @@ fi
 if [ "$#" -lt 3 ]; then
     # Debe tener al menos 3 parametros
     # Se provee ayuda
-    echo "Cantidad de parametros incorrecta"
-    echo "Uso: Configurar.sh archivo clave valor [-y][-c comentario]"
+    echo "Cantidad de parametros incorrecta" >&2
+    showUsage
     exit 2;
 fi
 if [ ! -f "$1" ] ; then
     # Validaciones de archivo
-    echo "$1 no es un archivo";
-    exit 2;
+    echo "$1 no es un archivo" >&2
+    exit 4;
 fi
 if [ ! -w "$1" ] ; then
     # Validaciones de permisos
-    echo "No se tienen permisos de escritura sobre $1";
+    echo "No se tienen permisos de escritura sobre $1" >&2
     exit 126;
 fi
 
