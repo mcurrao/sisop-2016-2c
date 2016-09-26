@@ -1,4 +1,13 @@
 ﻿<#
+.SYNOPSIS
+El script muestra el porcentaje de ocurrencia de cada carácter del archivo indicado por parámetro.
+.DESCRIPTION
+El script muestra el porcentaje de ocurrencia de cada carácter del archivo indicado por parámetro.
+.PARAMETER path_de_archivo
+Archivo a leer
+.EXAMPLE
+Ejercicio2.ps1 C:\Archivo.txt
+.NOTES
 Nombre del script: Ejercicio2.ps1
 Trabajo práctico número 1
 Ejercicio 2
@@ -9,20 +18,10 @@ Martinez,Sebastian	   DNI:36.359.866
 Rey,Juan Cruz		   DNI:36.921.336
 Rodriguez, Gabriel Alfonso DNI:36.822.462
 
-Entrega 6/09/2016
+2da Entrega 27/09/2016
 #>
 
 
-<#
-.SYNOPSIS
-    El script muestra el porcentaje de ocurrencia de cada carácter del archivo indicado por parámetro.
-.DESCRIPTION
-    El script muestra el porcentaje de ocurrencia de cada carácter del archivo indicado por parámetro.
-.PARAMETER path_de_archivo
-    Archivo a leer
-.EXAMPLES
-    Ejercicio2.ps1 C:\Archivo.txt
-#>
 
 
 #Paramentros de entradad al script
