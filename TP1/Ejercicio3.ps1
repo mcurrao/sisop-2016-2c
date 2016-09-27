@@ -9,8 +9,8 @@ cumple la longitud que se envía por parámetro y mueve los archivos dentro de e
 .EXAMPLE
 ./ejercicio3.ps1 test 3 ó
 -/ejercicio3.ps1 -path test -x 3
-#>
-<#
+
+.NOTES
 Nombre del script: Ejercicio3.ps1
 Trabajo práctico número 1
 Ejercicio 3

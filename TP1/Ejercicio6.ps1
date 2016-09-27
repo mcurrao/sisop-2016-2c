@@ -11,8 +11,7 @@ nombre, tamaño original, tamaño comprimido y la relación de compresión
 Nombre archivo  Tamaño original Tamaño comprimido  Relación
 Archivo1.txt    100             10                 0,1
 Archivo2.jpg    2366            2254               0,95
-#>
-<#
+.NOTES
 Nombre del script: Ejercicio6.ps1
 Trabajo práctico número 1
 Ejercicio 6

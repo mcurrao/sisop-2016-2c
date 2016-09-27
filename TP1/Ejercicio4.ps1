@@ -16,8 +16,8 @@ function Show-Objects {
     Get-Service | Show-Objects -asc -propiedad "Status,Name" -filtro "Stopped" -print
     Toma las columnas Status y Name de Get-Service, las filtra en caso de tener el valor Stopped en Status, y las ordena de forma ascendente, primero Status y luego Name. 
     Pero esta vez mostrando por pantalla las propiedades mandadas por parametro.
-    #>
-    <#
+    
+    .NOTES
     Nombre del script: Ejercicio4.ps1
     Trabajo práctico número 1
     Ejercicio 4
