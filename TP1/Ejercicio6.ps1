@@ -32,8 +32,8 @@ Param (
     [string]$archivo
 )
 
-# validaciones de existencia y tipo de archivo
 begin {
+    # validaciones de existencia y tipo de archivo
     $existe = test-path $archivo
     if($existe -eq $false) {
         write-error "Archivo inexistente"
@@ -46,18 +46,18 @@ begin {
             exit
         }
     }
-}
-
-process {
+    
     #formateo de campos
-	$campos = @{Label = "Nombre Archivo"; Expression = { $_.FullName }; },
-	@{Label = "Tamaño original"; Expression = { [Math]::Round($_.Length/1MB,2) }; },
-	@{Label = "Tamaño comprimido"; Expression = { [Math]::Round($_.CompressedLength/1MB,2) }; }, 
-	@{Label = "Relación"; Expression = { [Math]::Round($_.CompressedLength/$_.Length,3) }; } 
+    $campos = @{Label = "Nombre Archivo"; Expression = { $_.FullName }; },
+    @{Label = "Tamaño original"; Expression = { [Math]::Round($_.Length/1MB,2) }; },
+    @{Label = "Tamaño comprimido"; Expression = { [Math]::Round($_.CompressedLength/1MB,2) }; }, 
+    @{Label = "Relación"; Expression = { [Math]::Round($_.CompressedLength/$_.Length,3) }; } 
 
     # importo la librería necesaria para el manejo de .zip
     Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+}
 
+process {
     # leo los contenidos del .zip
     $path = (Get-Location).Path + "\" + $archivo
     $files = [System.IO.Compression.ZipFile]::OpenRead($path).Entries
