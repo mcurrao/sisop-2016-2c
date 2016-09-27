@@ -13,7 +13,7 @@
 function showUsage {
     # La consigna solicitaba uso de funciones
     # Muestro el uso
-    echo "Uso: Configurar.sh archivo clave valor [-y][-c [comentario]]"
+    echo "Uso: $0 archivo clave valor [-y][-c [comentario]]"
 }
 
 #Ayuda del script con -h o con -?
@@ -22,7 +22,7 @@ if [ "$1" == "-h" ] || [ "$1" == "-?" ] ; then
     echo "'"-y"': No pedir confirmacion de sobreescritura"
     echo "'"-c"': Comentario adicional. Si no se provee como argumento, se solicitara"
     echo "Ejemplo:"
-    echo './Configurar.sh /etc/archivo.conf INIT “Nuevo Valor” -c "Comentario mas largo"'
+    echo "$0"' /etc/archivo.conf INIT “Nuevo Valor” -c "Comentario mas largo"'
     exit
 fi 
 
