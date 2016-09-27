@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Nombre del script: reporte.sh
+# Nombre del script: ejercicio3.sh
 # Trabajo practico numero 2
 # Ejercicio 3
 # Ambroso, Nahuel Oscar	     DNI:34.575.684
