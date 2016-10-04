@@ -1,25 +1,22 @@
-﻿
-function Show-Objects {
-
     <#
     .Synopsis
-    Ordena los objetos y los filtra según un determinado valor
+    Ordena los objetos y los filtra seg�n un determinado valor
 
     .Description
-    Separa las propiedades indicadas de los objetos, y las ordena de forma descendente o ascendente. Luego filtra los objetos según su valor en la primera propiedad ingresada.
+    Separa las propiedades indicadas de los objetos, y las ordena de forma descendente o ascendente. Luego filtra los objetos seg�n su valor en la primera propiedad ingresada.
     
     .Example
-    Get-Service | Show-Objects -asc -propiedad "Status,Name" -filtro "Stopped"
+    PS > Get-Service | .\Ejercicio4.ps1  -propiedad Status,name -filtro 'Stopped' -asc -print Status,Name
     Toma las columnas Status y Name de Get-Service, las filtra en caso de tener el valor Stopped en Status, y las ordena de forma ascendente, primero Status y luego Name.
     
     .Example
-    Get-Service | Show-Objects -asc -propiedad "Status,Name" -filtro "Stopped" -print
+    PS > Get-Service | .\Ejercicio4.ps1  -propiedad Status -filtro 'Stopped' -asc -print Status,Name
     Toma las columnas Status y Name de Get-Service, las filtra en caso de tener el valor Stopped en Status, y las ordena de forma ascendente, primero Status y luego Name. 
     Pero esta vez mostrando por pantalla las propiedades mandadas por parametro.
     
     .NOTES
     Nombre del script: Ejercicio4.ps1
-    Trabajo práctico número 1
+    Trabajo pr�ctico n�mero 1
     Ejercicio 4
  
     Ambroso, Nahuel Oscar	   DNI:34.575.684
@@ -31,93 +28,41 @@ function Show-Objects {
     Entrega 6/09/2016
     #>
     
-    [CmdletBinding()]
-    param(
-        # Objetos pasados por pipe
-        [Parameter(
-            Mandatory=$true,
-            Position=0,
-            ValueFromPipeline=$true
-        )]
-        [array]$objeto,
-
-        # Descendente (default)
-        [switch]$desc,
-        # O Ascendente
-        [switch]$asc,
-
-        # Propiedades por las que se ordenan los objetos, separadas por coma
-        [Parameter(Mandatory=$true)]
-        [string]$propiedad,
-		[switch]$print,
-        # Valores a filtrar de la propiedad indicada en -propiedad (exacto o parcial)
-        [string]$filtro
+ [cmdletbinding()]
+  param(
+        [Parameter(mandatory=$true, ValueFromPipeline=$true)]$InputObject,
+        [Parameter(Mandatory=$true, 
+            HelpMessage="Nombre de la propiedad sobre la que se va a operar")]
+        [string[]] $propiedad,	
+        [Parameter(Mandatory= $true, 
+            HelpMessage="Valor que se debe buscar en la propiedad indicada con  -propiedad. 
+                            El valor puede ser exacto o no serlo. En caso de no ser exacto , debe estar contenido en la misma")]
+        [string] $filtro,
+        [parameter(Mandatory=$false, ParameterSetName="asc")][Switch] $asc,
+        [parameter(Mandatory=$false, ParameterSetName="des")][switch] $desc,
+        [Parameter(Mandatory= $false)][ValidateNotNullorEmpty()][string[]] $print
     )
-
-    Begin{
-        $error = 0
-
-        # Se verifica que no se hayan ingresado ambas opciones de ordenamiento
-        if($desc -and $asc) {
-            $error = 1
-        }
-        
-        # Se separan las propiedades y se las guarda en un array
-        $propiedades = @()
-        $propiedades += $propiedad.Split(",")
-
-        # Se crea un array para almacenar los objetos ingresados por pipeline
-        $objetos = @()
+    begin {
+             $objects = @() 
+          }
+    process { 
+        $objects += $InputObject
     }
-
-    Process{
-        if ($error -eq 0) {
-            # Se agregan los objetos al array uno por uno
-            $objetos += $objeto
+    end {
+        foreach($p in $propiedad){
+        $objects_1 += $($objects | Where-Object{$_.$p -like "*$filtro*"})
         }
-    }
-
-    End{
-
-            if ($print) {
-
-                echo "----------------------------------"
-                echo "Propiedades:"
-
-                foreach($pro in $propiedades) {
-                echo $pro
-                }
-
-                echo "----------------------------------"
-            }
-
-        if ($error -eq 0) {
-            # Se filtran los objetos con determinado valor en caso de que se haya dado un filtro
-            if ($filtro -ne $null) {
-                $propiedad_a_filtrar = $propiedades[0]
-                $objetos = $objetos | Where-Object {$_.$propiedad_a_filtrar -like "*$filtro*"}
-            }
-
-            # Se toman solo las propiedades solicitadas
-            $objetos = $objetos | Select-Object -Property $propiedades
-
-            # Se ordenan los objetos según el orden solicitado
-            if ($asc) {
-                $objetos = $objetos | Sort-Object -Property $propiedades
-            }
-            else {
-                $objetos = $objetos | Sort-Object -Property $propiedades -Descending
-            }
-
-            # Finalmente se imprimen en pantalla los objetos uno por uno
-            foreach($objeto in $objetos) {
-                echo $objeto
-            }
+       if( $asc)
+        {
+        $objects_2= $($objects_1 | Sort-Object -Property $propiedad -Unique)
         }
-        else {
-            if ($error -eq 1) {
-                echo "Parámetros inválidos: Sólo puede haber una opción de ordenamiento."
-            }
+        else{
+        $objects_2= $($objects_1 | Sort-Object -Property $propiedad -Unique -Descending)
+        }
+        if($print -ne ''){
+           $objects_2 | Select-Object -Property $print
+        }
+        else{
+            return $objects_2
         }
     }
-}
