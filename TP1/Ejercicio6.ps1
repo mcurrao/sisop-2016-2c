@@ -49,7 +49,7 @@ begin {
     #formateo de campos
     $campos = @{Label = "Nombre Archivo"; Expression = { $_.FullName }; },
     @{Label = "Tamaño original"; Expression = { "{0:n6}" -f ($_.Length/1MB) }; },
-	@{Label = "Tamaño comprimido"; Expression = { "{0:n6}" -f ($_.CompressedLength/1MB) }; },
+    @{Label = "Tamaño comprimido"; Expression = { "{0:n6}" -f ($_.CompressedLength/1MB) }; },
     @{Label = "Relación"; Expression = { "{0:n3}" -f ($_.CompressedLength/$_.Length) }; } 
 
     # importo la librería necesaria para el manejo de .zip
