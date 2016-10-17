@@ -47,10 +47,8 @@ void printRusage(struct rusage* rusage) {
 }
 
 void printClockDiff(struct timespec* startTime, struct timespec* endTime) {
-    unsigned long long int startEpoch = (startTime->tv_sec) * 100000000 + startTime->tv_nsec;
-    unsigned long long int endEpoch = (endTime->tv_sec) * 100000000 + endTime->tv_nsec;
-    unsigned long long int elapsedTime = endEpoch - startEpoch;
-    printf("\nnanoSegundos transcurridos:\t\t\t%ld", elapsedTime);
-    printf("\nSegundos transcurridos:\t\t\t%ld\n", endTime->tv_sec-startTime->tv_sec);
-    printf("%ld %ld %ld %ld", startTime->tv_sec, startTime->tv_nsec, endTime->tv_sec, endTime->tv_nsec);
+    double startTimeInSeconds = (startTime->tv_sec) + (startTime->tv_nsec / 1.0e9);
+    double endTimeInSeconds = (endTime->tv_sec) + (endTime->tv_nsec / 1.0e9);
+    double elapsedTime = endTimeInSeconds - startTimeInSeconds;
+    printf("\nTiempo de ejecucion transcurrido:\t%0.3f s", elapsedTime);
 }
