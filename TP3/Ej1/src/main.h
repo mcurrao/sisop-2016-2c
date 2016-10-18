@@ -9,13 +9,20 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define RUN_AS_HEAVY_PROCESS 1
+#define RUN_AS_HEAVY_PROCESS 0
 #define RUN_AS_READ 0
 #define PROCESSING_UNITS_AMOUNT 1000
 extern struct rusage usageStatistics;
+struct thread_args {
+    int* intArray;
+    int arraySize;
+    int randomNumber;
+};
 
 void playHeavy(int *intArray, int arraySize, int randomNumber);
 void playLight(int *intArray, int arraySize, int randomNumber);
+void* playLight_run_read(void *args);
+void* playLight_run_write(void *args);
 
 void doRead(int *intArray, int arraySize);
 void doWrite(int *intArray, int arraySize, int randomNumber);
