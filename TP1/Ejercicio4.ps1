@@ -3,16 +3,16 @@
 Ordena los objetos y los filtra según un determinado valor
 
 .Description
-Separa las propiedades indicadas de los objetos, y las ordena de forma descendente o ascendente. Luego filtra los objetos según su valor en la primera propiedad ingresada.
+Filtra y ordena una colleccion de objetos en base a una propiedad y valor ingresados. En caso de recibir un listado de propiedades en el parametro -print, imprime dichas propiedades por pantalla.
     
 .Example
-PS > Get-Service | .\Ejercicio4.ps1  -propiedad Status,name -filtro 'Stopped' -asc -print Status,Name
-Toma las columnas Status y Name de Get-Service, las filtra en caso de tener el valor Stopped en Status, y las ordena de forma ascendente, primero Status y luego Name.
+PS > Get-Service | .\Ejercicio4.ps1 -propiedad Status -filtro 'Stopped'
+Devuelve un listado de objetos que en su propiedad "Status" contengan "Stopped", ordenados ascendentemente por "Status"
     
 .Example
-PS > Get-Service | .\Ejercicio4.ps1  -propiedad Status -filtro 'Stopped' -asc -print Status,Name
-Toma las columnas Status y Name de Get-Service, las filtra en caso de tener el valor Stopped en Status, y las ordena de forma ascendente, primero Status y luego Name. 
-Pero esta vez mostrando por pantalla las propiedades mandadas por parametro.
+PS > Get-Service | .\Ejercicio4.ps1  -propiedad Status -filtro 'Stopped' -desc -print Status,Name
+Imprime por pantalla las propiedades Status y Name de Get-Service, solo de los objetos que contengan "Stopped" en Status, ordenados de forma descendente por Status. 
+
     
 .NOTES
 Nombre del script: Ejercicio4.ps1
@@ -40,7 +40,7 @@ param(
     [string] $filtro,
     [parameter(Mandatory=$false)][Switch] $asc,
     [parameter(Mandatory=$false)][switch] $desc,
-    [Parameter(Mandatory= $false)][ValidateNotNullorEmpty()][string[]] $print
+    [Parameter(Mandatory= $false, HelpMessage="Propiedades a imprimir por pantalla")][ValidateNotNullorEmpty()][string[]] $print
 )
 
 
