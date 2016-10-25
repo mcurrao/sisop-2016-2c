@@ -11,7 +11,7 @@
 #Rey,Juan Cruz		   DNI:36.921.336  #
 #Rodriguez, Gabriel Alfonso DNI:36.822.462 #
 #					   #
-#1ra Entrega 27/09/2016 		   #
+#2daa Entrega --/--/2016 		   #
 #------------------------------------------#
 
 
@@ -54,70 +54,47 @@ mostrarAyuda(){
 	echo "\n\nModo de Empleo: $0 [OPCION]...\n "
 	echo "\nScript que filtra las ventas realizadas en un determinado mes y año, o por cliente. Las opciones a ingresar son:"
 	echo "\n'-c <Numero de cliente>' Se muestran todas las ventas hechas a un determinado cliente en el mes actual."
-	echo "\n'-m <Mes y año>' Se muestran todas las ventas realizadas en un determinado mes y año. El formato de la fecha es 'MM-AAAA'."
-	echo "\n\nSe puede ingresar una o ambas opciones al script. En caso de no ingresar ninguna opcion, el scrito muestra las ventas del mes y año actual."
+	echo "\n'-m <Mes y año>' Se muestran todas las ventas realizadas en un determinado mes y año. El formato de la fecha es 'MM/AAAA'."
+	echo "\n\nSe puede ingresar una o ambas opciones al script. En caso de no ingresar ninguna opcion, el script muestra las ventas del mes y año actual."
 }
 
 correrAWK(){
 		
 	
 	
-	patron="ventas-[0-9][0-9]\.$2\.$3$" 	#Creo el patron de busqueda de la expresion regular
-	lista=$(ls -1 | grep -e $patron | sort )   #Obtengo una lista de todos los archivos obtenidos a partir de la expresion regular
+	patron="ventas-[0-9][0-9]\.$mes\.$anio" 	#Creo el patron de busqueda de la expresion regular
+	lista=$(ls -1 -B "Ventas"| grep -e $patron | xargs )   #Obtengo una lista de todos los archivos obtenidos a partir de la expresion regular
 		
-	comando="cat $lista >> arch_temporal.txt"	
-	eval $comando					#Ejecuto el comando para crear un unico archivo, con el contenido de los obtenidos
-	
-	
-
-	#Inicializo las variables que voy a utilizar en el awk	
-	awk -F "|" -v cliente=$1 -v mes=$2 -v anio=$3 -v cant_registros=$lineas_total '
-	
-	
-
-	BEGIN{  
-			
-			if(cliente != "0")
-				printf("\nReporte del mes %s del %s del cliente %s: \n\n", mes, anio, cliente)
-			else
+	if test -n "$lista";
+	then	
 		
-				printf("\nReporte del mes %s del %s: \n\n", mes, anio)
-	
-			printf("%s %18s %15s %15s %10s\n\n", "Hora", "Cod_de_factura", "Cod_de_cliente", "Razon_social", "Importe")
-			
-				
-	
-			
-	}
-		
-
-	(NF==5 && cliente==$3){ printf("%s %8s %15s %19s %10s \n", $1, $2, $3, $4, $5); cantidad++ }
-
-	(NF==5 && cliente=="0") { printf("%s %8s %15s %19s %10s \n", $1, $2, $3, $4, $5); cantidad++ }
-
-
-
-	
-
-
-	' arch_temporal.txt > salida.txt
-
-	tam_salida=$(wc -l < salida.txt)
-
-	if [ $tam_salida -eq 5 ];
-	then
-		if [ $1 -eq 0 ];
+		if test $cliente -ne 0; #Si se ingreso el cliente...
 		then
-			echo "\nNo se realizo ninguna venta en el mes $2 del $3.\n"
+			printf "\nReporte del mes %s del %s del cliente %s: \n\n" "$mes" "$anio" "$cliente" #Indico que se va a mostrar por cliente
 		else
-			echo "\nNo se realizo ninguna venta al cliente $1.\n"
+			printf "\nReporte del mes %s del %s: \n" "$mes" "$anio" #Indico que no se muestra por cliente
 		fi
-	else
-		cat salida.txt		
-	fi
+			printf "%s %7s %18s %15s %15s %10s\n" "Dia" "Hora" "Cod_de_factura" "Cod_de_cliente" "Razon_social" "Importe"
+		for file in $lista; 
+		do
+		
+			d=$( echo $file | cut -c8-9 )
+			awk -F "|" -v cliente=$1 -v mes=$2 -v anio=$3 -v dia=$d '
+
+				(NF==5 && cliente==$3){ printf("%s %10s %10s %15s %20.14s %4s %4.2f \n", dia, $1, $2, $3, $4, "$", $5); cantidad++ }
+
+				(NF==5 && cliente=="0") { printf("%s %10s %10s %15s %20.14s %4s %4.2f \n", dia, $1, $2, $3, $4, "$", $5); cantidad++ }
+
+				END{printf "\n"}
+
+			' "Ventas/$file"
+		done
+
 	
-	rm salida.txt
-	rm arch_temporal.txt		#Elimino el archivo temporal
+	else
+		echo "\nNo se realizo ninguna venta en el mes $2 del $3.\n"
+	
+fi
 }	
 
 
@@ -131,7 +108,7 @@ case $# in
 		;;
 
 	1)
-		if [ $1 = "-?" ] || [ $1 = "-h" ]; #Si se ingreso -? o -h...
+		if test "$1" = "-?" -o "$1" = "-h"; #Si se ingreso -? o -h...
 		then
 			mostrarAyuda	#Se muestra la ayuda del script...
 		else
@@ -140,12 +117,12 @@ case $# in
 		;;
 
 	2)	#Si ingreso -c o -m...
-		if [ $1 = "-c" ] || [ $1 = "-m" ];
+		if test "$1" = "-c" -o "$1" = "-m";
 		then		
-			if [ $1 = "-c" ];	#Si ingreso -c...
+			if test "$1" = "-c";	#Si ingreso -c...
 			then
 				
-				if [ $2 -gt 0 ]; #Valido que sea un numero positivo el Cod de cliente
+				if test $2 -gt 0; #Valido que sea un numero positivo el Cod de cliente
 				then
 					cliente=$2
 					mes=$(date +%m)
@@ -155,14 +132,14 @@ case $# in
 					error=1  #Sino, "error"...
 				fi
 			 
-			elif [ $1 = "-m" ]; #Si ingreso -m...
+			elif test "$1" = "-m"; #Si ingreso -m...
 			then
 				
-				mes=$(echo $2 | cut -f1 -d- ) 
-				anio=$(echo $2 | cut -f2 -d- )
+				mes=$(echo $2 | cut -f1 -d\/ ) 
+				anio=$(echo $2 | cut -f2 -d\/ )
 				#Verifico que se haya ingresado un mes y año valido...
 				echo
-				if ([ $mes -ge 1 ] && [ $mes -le 12 ] && [ $mes -le $(date +%m) ]) && ([ $anio -ge 1900 ] && [ $anio -le $(date +%Y) ]); 					then				
+				if [ $mes -ge 1 -a $mes -le 12 -a $mes -le $(date +%m) ] && [ $anio -ge 1900 -a $anio -le $(date +%Y) ]; 					then				
 					cliente="0"
 					
 					correrAWK $cliente $mes $anio 
@@ -170,7 +147,7 @@ case $# in
 					error=2 #Sino, "error"...
 				fi
 			
-			fi			
+			fi	2> /dev/null		
 		else
 							
 			error=3 #Sino, "error"...
@@ -179,9 +156,9 @@ case $# in
 		;;
 
 	4)	#Si ingreso tanto -c como -m...
-		if ([ $1 = "-c" ] && [ $3 = "-m" ]) || ([ $1 = "-m" ] && [ $3 = "-c" ]);
+		if [ "$1" = "-c" -a "$3" = "-m" ] || [ "$1" = "-m" -a "$3" = "-c" ];
 		then
-			if [ $1 = "-c" ] && [ $3 = "-m" ]; #Si ingrese primero el -c y despues el -m...
+			if [ "$1" = "-c" -a "$3" = "-m" ]; #Si ingrese primero el -c y despues el -m...
 			then
 				mes=$(echo $4 | cut -f1 -d- )
 				anio=$(echo $4 | cut -f2 -d- )
