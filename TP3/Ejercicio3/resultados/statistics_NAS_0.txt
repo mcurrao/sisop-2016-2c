@@ -1,0 +1,8 @@
+TECNOLOGIA:	NAS
+TIPO DE RAID:	0
+
+Tiempo reloj:				42972171 microsegundos
+Tiempo CPU sistema total:		564000 microsegundos
+Tiempo CPU usuario total:		412000 microsegundos
+Operaciones de entrada (en bloques):	0 bloques
+Operaciones de salida (en bloques):	0 bloques

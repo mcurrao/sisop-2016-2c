@@ -2,7 +2,6 @@
 int main(int argc, char **argv)
 {
     FILE *f1;
-    struct stat st;
     struct timespec inicio, fin;
     time_t t_total;
     struct rusage ru;

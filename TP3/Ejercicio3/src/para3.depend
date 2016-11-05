@@ -2,7 +2,7 @@
 1478372282 source:/home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/funciones.c
 	"cabecera.h"
 
-1478379928 /home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/cabecera.h
+1478382391 /home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/cabecera.h
 	<stdio.h>
 	<stdlib.h>
 	<sys/resource.h>
@@ -12,6 +12,6 @@
 	<unistd.h>
 	<sys/types.h>
 
-1478379839 source:/home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/main.c
+1478381950 source:/home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/main.c
 	"cabecera.h"
 
