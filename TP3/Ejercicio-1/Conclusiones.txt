@@ -1,0 +1,24 @@
+En base al análisis de los resultados de cada ejecución se obtienen las siguientes conclusiones:
+- La mayor parte del tiempo de ejecución es utilizada en el proceso padre durante la creación e inicialización del vector de enteros. Por otro lado,
+el tiempo empleado por los hijos para recorrerlo y procesarlo (ya sea en modo lectura o escritura) es mucho menor ya que los procesadores de hoy en día 
+son muy potentes y realizan dichos calculos en un instante. Por eso se aprecian valores de cientos de microsegundos en su ejecución.
+
+- Durante la lectura el tiempo de usuario es menor al de sistema debido a que realizar el recorrido y sumatoria es un cálculo simple. En cambio durante 
+la escritura al procesar las multiplicaciones el numero entero se vuelve cada vez mas grande y, en consecuencia, incrementa el tiempo de procesamiento 
+al nivel de que el tiempo de usuario supera al de sistema. 
+Con esta información se puede concluir que el proceso de escritura es mas CPU Bound que el proceso de lectura.
+
+- Los Soft Page Fault suceden durante la alocación de memoria y generación de números aleatorios por parte del proceso padre, durante la ejecución
+de los hijos no hay fallos debido a que el vector ya se encuentra cargado en memoria. La cantidad de fallos aumenta en base a la dimension del vector.
+
+- En todos los casos se registran 0 (cero) Hard Page Faults debido a que el sistema posee memoria suficiente para proveerle al proceso todas las páginas
+que necesita, por lo tanto no es posible que se registre tal situación.
+
+- En todos los casos se registran exactamente 1000 cambios de contexto voluntarios debido a que dicha situación sucede una vez por cada momento que el proceso
+padre recibe la finalización de su hijo para iniciar el siguiente.
+
+- Los cambios de contexto involuntarios suceden por política del planificador de corto plazo del sistema operativo, es necesario tener en cuenta que durante 
+la ejecución del script existen otros procesos en el sistema y nuestro proceso compite por los recursos junto al resto de procesos del sistema operativo.
+La cantidad de cambios de contexto involuntarios crece respecto a mayor procesamiento, siendo el mínimo el recorrido de 25 mil registros para lectura y el 
+máximo el de 75 mil registros para escritura.
+
