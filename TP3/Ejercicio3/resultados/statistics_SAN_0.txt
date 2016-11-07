@@ -1,0 +1,8 @@
+TECNOLOGIA:	SAN
+TIPO DE RAID:	0
+
+Tiempo reloj:				3921784 microsegundos
+Tiempo CPU sistema total:		236000 microsegundos
+Tiempo CPU usuario total:		672000 microsegundos
+Operaciones de entrada (en bloques):	8 bloques
+Operaciones de salida (en bloques):	307200 bloques

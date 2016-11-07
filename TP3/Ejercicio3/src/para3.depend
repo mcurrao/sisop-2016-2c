@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1478372282 source:/home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/funciones.c
+	"cabecera.h"
+
+1478382391 /home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/cabecera.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/resource.h>
+	<sys/time.h>
+	<time.h>
+	<sys/stat.h>
+	<unistd.h>
+	<sys/types.h>
+
+1478381950 source:/home/mcurrao/Documents/UNLaM/sisop/sisop-2016-2c/TP3/Ejercicio3/src/main.c
+	"cabecera.h"
+
