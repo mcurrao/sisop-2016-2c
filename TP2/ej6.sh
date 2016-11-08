@@ -3,17 +3,17 @@
 # Constantes
 EXIT_SUCCESS=0
 EXIT_ERROR=1
-ERROR_DE_ALGUN_TIPO=1
 
 TRUE=1
 FALSE=0
 
-
-# La ruta en la que estÃ¡n los archivos con los PIDs y carpetas de los procesos.
+# La ruta en la que est�n los archivos con los PIDs y carpetas de los trabajos.
 RUTA_ARCHIVOS=/var/tmp/demonio
 
-# La ruta a los buffers (los archivos de salida) de los procesos.
-RUTA_BUFFERS=/var/tmp/demonio_buffers
+# La ruta a los buffers (los archivos de salida) de los trabajos.
+RUTA_BUFFERS=/var/tmp/buffers
+
+RUTA_REFERENCIAS=/var/tmp/demonio_referencias
 
 error_y_salir() {
   echo $1
@@ -22,56 +22,42 @@ error_y_salir() {
 }
 
 ayuda() {
-  echo "ej6: administra procesos que controlan el tamaÃ±o de archivos."
-  echo "                                                                    "
-  echo "			USO:                                         "
-  echo "                                                                    "
-  echo "  ej6 start RUTA                                                    "
-  echo "  ej6 status                                                        "
-  echo "  ej6 stop ID_proceso                                               "
-  echo "  ej6 Escuchar ID_proceso                                           "
-  echo "                                                                    "
-  echo "			COMANDOS:				"
-  echo "                                                                    "
-  echo "  start      Arranca un procesos en la RUTA dada.                   "
-  echo "  Estado     Muestra informaciÃ³n de los procesos activos.           "
-  echo "  stop       Detiene al procesos con ID_proceso (consultar Estado)  "
-  echo "  Escuchar   Imprime en pantalla cambios en los archivos del procesos"
-  echo "             ID_proceso.                                                "
-  echo "En caso de que no se envie parametro se escuchara el estado del directorio"
- echo "                                                       "
-  echo "Nota adicional: En caso de un error similar a \"bc: no se encontrÃ³ la orden\" "
-echo "Debido a que el Script usa Package: bc (El lenguaje "
-  echo "calculador de precisiÃ³n arbitraria bc de GNU) es necesario tenerlo"
-  echo "instalado en su sistema."
+  echo "ejercicio6: administra trabajos que controlan el tama�o de archivos.     "
+  echo "                                                                         "
+  echo "USO                                                                      "
+  echo "  Para iniciar: ej6.sh RUTA_ARCHIVO/ARCHIVO_A_GUARDAR                                  "
+
+  echo "  Para ver proceso: ej6.sh                                                            "
+echo "  Para ver ayuda: ej6.sh -? -?                                                                       "
 }
 
-# Verifica la existencia del proceso dado y sale con un mensaje de error si no
+# Verifica la existencia del trabajo dado y sale con un mensaje de error si no
 # existe.
-verificar_existencia_procesos() {
+verificar_existencia_trabajo() {
   stat "$RUTA_ARCHIVOS/$1" &> /dev/null
   if [[ $? != 0 ]]
-  then  # Si el archivo no existe, por lo tanto el procesos tampoco.
-    echo "El proceso $1 no existe"
-    exit $ERROR_DE_ALGUN_TIPO
+  then  # El archivo no existe, por lo tanto el trabajo tampoco.
+    echo "El trabajo $1 no existe"
+    exit $EXIT_FAILURE
   fi
 }
 
-# Arranca el demonio. Recibe como parÃ¡metro la carpeta que debe inspeccionar.
-Empezar() {
-# si la carpeta no existe, entonces no puede Empezar
+# Arranca el demonio. Recibe como par�metro la carpeta que debe inspeccionar.
+arrancar() {
   if [[ ! -d $1 ]]
   then
     error_y_salir "La carpeta dada no existe"
   fi
 
-  # Si la ruta es relativa , la hacemos absoluta.
+  # Absolutizamos la ruta.
   CARPETA_NUEVO_DEMONIO=$(realpath $1)
+#absolutizamos arhivo
+ARCHIVO_BUFFER=$(realpath $2)
 
   # Creamos la carpeta si es que no existe.
   mkdir $RUTA_ARCHIVOS &> /dev/null
 
-  # Verifico que la carpeta no estÃ© ya siendo cubierta por otro demonio activo.
+  # Verifico que la carpeta no est� ya siendo cubierta por otro demonio activo.
   for ARCHIVO in `ls $RUTA_ARCHIVOS`
   do
     LINEA=`cat $RUTA_ARCHIVOS/$ARCHIVO`
@@ -82,25 +68,25 @@ Empezar() {
 
     if [[ $CARPETA = $CARPETA_NUEVO_DEMONIO ]]
     then
-      echo "La carpeta $CARPETA ya estÃ¡ siendo cubierta por la tarea $ARCHIVO"
-      exit $ERROR_DE_ALGUN_TIPO
+      echo "La carpeta $CARPETA ya est� siendo cubierta por la tarea $ARCHIVO"
+      exit $EXIT_FAILURE
     fi
 
     if [[ $CARPETA =~ ^$CARPETA_NUEVO_DEMONIO ]]
     then
-      echo "La carpeta $CARPETA, incluÃ­da en $CARPETA_NUEVO_DEMONIO, ya estÃ¡ siendo cubierta por el proceso $ARCHIVO"
-      exit $ERROR_DE_ALGUN_TIPO
+      echo "La carpeta $CARPETA, inclu�da en $CARPETA_NUEVO_DEMONIO, ya est� siendo cubierta por la tarea $ARCHIVO"
+      exit $EXIT_FAILURE
     fi
 
     if [[ $CARPETA_NUEVO_DEMONIO =~ ^$CARPETA ]]
     then
-      echo "La carpeta $CARPETA_NUEVO_DEMONIO ya estÃ¡ siendo cubierta por la tarea $ARCHIVO"
-      exit $ERROR_DE_ALGUN_TIPO
+      echo "La carpeta $CARPETA_NUEVO_DEMONIO ya est� siendo cubierta por la tarea $ARCHIVO"
+      exit $EXIT_FAILURE
     fi
   done
 
   # Podemos crear el demonio.
-  # Nos fijamos cuÃ¡l es el ID del demonio mÃ¡s pequeÃ±o disponible.
+  # Nos fijamos cu�l es el ID del demonio m�s peque�o disponible.
   ID_NUEVO_DEMONIO=1
   stat "$RUTA_ARCHIVOS/$ID_NUEVO_DEMONIO" &> /dev/null
   while [[ $? = 0 ]]
@@ -112,27 +98,30 @@ Empezar() {
   # Arrancamos el demonio.
   mkdir $RUTA_BUFFERS &> /dev/null
   echo "" > $RUTA_BUFFERS/$ID_NUEVO_DEMONIO
-  bash ./demonio.sh "$CARPETA_NUEVO_DEMONIO" "$RUTA_BUFFERS/$ID_NUEVO_DEMONIO" "$RUTA_ARCHIVOS/$ID_NUEVO_DEMONIO" &
+  #bash ./ej6_demonio.sh "$CARPETA_NUEVO_DEMONIO" "$RUTA_BUFFERS/$ID_NUEVO_DEMONIO" "$RUTA_ARCHIVOS/$ID_NUEVO_DEMONIO" &
+
+  bash ./ej6_demonio.sh "$CARPETA_NUEVO_DEMONIO" "$ARCHIVO_BUFFER" "$RUTA_ARCHIVOS/$ID_NUEVO_DEMONIO" &
 
   PID_DEMONIO=$!
 
-  echo "Arrancado procesos en carpeta $CARPETA_NUEVO_DEMONIO con ID $ID_NUEVO_DEMONIO"
-  echo "Para finalizarlo manualmente (no recomendado), usar SIGUSR1 en $PID_DEMONIO"
+  echo "Arrancado trabajo en carpeta $CARPETA_NUEVO_DEMONIO con ID $ID_NUEVO_DEMONIO"
+  echo "Para finalizarlo manualmente (no recomendado), usar SIGUSR en $PID_DEMONIO"
 
   # Guardamos los datos del demonio en su archivo temporal.
   echo $PID_DEMONIO:$CARPETA_NUEVO_DEMONIO > $RUTA_ARCHIVOS/$ID_NUEVO_DEMONIO
+#guardamos su relacion: Path_a revisar : path donde guardar archivos administrativos 
+mkdir $RUTA_REFERENCIAS &> /dev/null
+echo $CARPETA_NUEVO_DEMONIO:$ARCHIVO_BUFFER > $RUTA_REFERENCIAS/$ID_NUEVO_DEMONIO
 }
 
 # Consulta el estado de los demonios.
-consultar_Estado() {
-
-  #   ls lanza error si pregunto por una carpeta que no esta creada, entonces intento crearla antes
+consultar_status() {
+  # ls se queja si la carpeta no existe. Oculto el error cre�ndola primero :).
   mkdir $RUTA_ARCHIVOS &> /dev/null
 
-  #si esta vacio el directorio significa que no hay procesos en ejecuciÃ³n
   if [[ `ls $RUTA_ARCHIVOS` = "" ]]
   then
-    echo "No hay procesos en ejecuciÃ³n"
+    echo "No hay trabajos en ejecuci�n"
     exit $EXIT_SUCCESS
   fi
 
@@ -144,71 +133,83 @@ consultar_Estado() {
 
     # Ignoro el :
     CARPETA=${CARPETA:1}
-    echo "Proceso $ARCHIVO: carpeta $CARPETA"
+    echo "Trabajo $ARCHIVO: carpeta $CARPETA"
   done
 }
 
-# Detiene un demonio, recibiendo su ID como parÃ¡metro.
+# Detiene un demonio, recibiendo su ID como par�metro.
 detener() {
-  verificar_existencia_procesos $1
+  verificar_existencia_trabajo $1
 
   LINEA=`cat $RUTA_ARCHIVOS/$1`
   PID=`grep -o ^[0-9]* <<< $LINEA`
 
   kill -SIGUSR1 $PID
 
-  echo "procesos $1 detenido"
+  echo "Trabajo $1 detenido"
 }
 
-# Escucha al procesos dado.
-Escuchar_proceso() {
-  echo "Escuchando al procesos $1. Si desea salir presione Ctrl + C para salir (el procesos seguirÃ¡ corriendo)."
+# Escucha al trabajo dado.
+listen() {
+  echo "Escuchando al trabajo $1. Ctrl + C para salir (el trabajo seguir� corriendo)."
 
-  verificar_existencia_procesos $1
-	echo "PID   FECHA   HORA   FORMATO   PESO(en kb) Cambios"
+  verificar_existencia_trabajo $1
+
   tail -n +0 -f $RUTA_BUFFERS/$1
 }
 
-# ValidaciÃ³n de parÃ¡metros y delegaciÃ³n a funciones.
-case $1 in
-  start)
-     if [[ $2 = "" ]]
-     then
-       error_y_salir "Falta la ruta"
-     fi
-     Empezar $2
-     ;;
-  Estado)
-    consultar_Estado
-    ;;
-  stop)
-     if [[ $2 = "" ]]
-     then
-       error_y_salir "Falta el ID de procesos. Consultar Estado ."
-     fi
-     detener $2
-     ;;
-  Escuchar)
-  
-     if [[ $2 = "" ]]
-     then
-       error_y_salir "Falta el ID de procesos. Consultar Estado."
-     fi
-    Escuchar_proceso $2
-    ;;
-  *)
-    if [[ $1 == "-?" ]]
+# Consulta el estado de los demonios.
+consultar_estados() {
+  # ls se queja si la carpeta no existe. Oculto el error cre�ndola primero :).
+  mkdir $RUTA_REFERENCIAS &> /dev/null
+
+  if [[ `ls $RUTA_REFERENCIAS` = "" ]]
+  then
+    error_y_salir "No hay trabajos en ejecuci�n. Mostrando ayuda:"
+    exit $EXIT_SUCCESS
+  fi
+
+  for ARCHIVO in `ls $RUTA_REFERENCIAS`
+  do
+	
+    LINEA=`cat $RUTA_REFERENCIAS/$ARCHIVO`
+    PATH1=`grep -o .*: <<< $LINEA`
+    PATH2=`grep -o :.* <<< $LINEA`
+    # Ignoro el :
+	#elimino ultimo caracter
+	PATH1=`echo $PATH1 | sed -e 's/.$//'`
+	#elimino primer caracter
+	PATH2=`echo $PATH2 | sed -e 's/^.//'`
+
+	tail -n +0 -f "$PATH2"
+	
+  done
+
+}
+
+# Validaci�n de par�metros y delegaci�n a funciones.
+if [[ $1 == "-?" ]]
     then
       ayuda
       exit $EXIT_SUCCESS
-    fi
-    if [[ $1 == "" ]]
-    then
-      echo "Falta el comando"
-    else
-      echo "Comando $1 desconocido"
-    fi
+ fi
 
-		ayuda
-		exit $EXIT_ERROR
-esac
+if [[ $# -gt 1 ]]
+    then
+      echo "Cantidad de parametros incorrecta"
+      ayuda
+	exit $EXIT_SUCCESS
+ fi
+
+
+
+if [[ $1 == "" ]]
+    then
+      consultar_estados
+fi
+
+if [[ $2 = "" ]]
+then
+	arrancar $PWD $1
+fi
+
