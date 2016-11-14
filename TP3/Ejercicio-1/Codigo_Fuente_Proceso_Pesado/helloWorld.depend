@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1479166147 source:/home/mcurrao/Documents/cProjects/helloWorld/main.c
+	"main.h"
+
+1479165706 source:/home/mcurrao/Documents/cProjects/helloWorld/children.c
+	"main.h"
+
+1479166923 /home/mcurrao/Documents/cProjects/helloWorld/main.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<sys/time.h>
+	<sys/resource.h>
+	<sys/wait.h>
+	<pthread.h>
+	<unistd.h>
+	<signal.h>
+
